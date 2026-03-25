@@ -23,3 +23,18 @@ async def read_root():
 @app.get("/books")
 async def read_all_books():
     return BOOKS
+
+"""
+let's request for specific book
+from the database of books that are in the shelf
+
+we use path parameter to fix this
+"""
+
+@app.get("/books/{book_title}")
+async def read_book(book_title: str):
+    for book in BOOKS:
+        if book.get("title").casefold() == book_title.casefold():
+            return book
+    return {"Error": "Book not found"}
+
