@@ -6,12 +6,12 @@ app = FastAPI()
 # the hard coded database for the project
 BOOKS = [
     {"title": "Clean Code", "author": "Robert C. Martin", "category": "Programming"},
-    {"title": "The Hobbit", "author": "J.R.R. Tolkien", "category": "Fantasy"},
-    {"title": "Atomic Habits", "author": "James Clear", "category": "Self-Help"},
+    {"title": "The Hobbit", "author": "J.R.R. Tolkien", "category": "fantasy"},
+    {"title": "Atomic Habits", "author": "James Clear", "category": "fantasy"},
     {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald", "category": "Classic"},
     {"title": "Deep Learning", "author": "Ian Goodfellow", "category": "AI & Tech"},
     {"title": "Dune", "author": "Frank Herbert", "category": "Science Fiction"},
-    {"title": "The Psychology of Money", "author": "Morgan Housel", "category": "Finance"},
+    {"title": "The Psychology of Money", "author": "Morgan Housel", "category": "fantasy"},
     {"title": "Python Crash Course", "author": "Eric Matthes", "category": "Programming"}
 ]
 
@@ -37,4 +37,20 @@ async def read_book(book_title: str):
         if book.get("title").casefold() == book_title.casefold():
             return book
     return {"Error": "Book not found"}
+
+"""
+you can perform search on the database based on some argument
+1. you can request a single information just as the previous code above 
+2. you can search for a list of information based on similarity in the database
+
+"""
+@app.get("/books/") #this is to tell the database you want to search by list
+async def search_book(searched: str):
+    search_term = []
+    for book in BOOKS:
+        if book.get("category").casefold() == searched.casefold():
+            search_term.append(book)
+    return search_term
+
+#
 
