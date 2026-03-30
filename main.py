@@ -109,3 +109,27 @@ async def delete_book(book_title: str):
             BOOKS.pop(i)
             break
     return BOOKS
+
+
+"""
+SOLUTION TO THE ASSIGNMENT 
+
+Create a new API Endpoint that can fetch all books from
+ a specific author using either Path Parameters
+ or Query Parameters.
+"""
+@app.get("/books/byauthor/{search}/")
+async def get_book(author: str):
+    fetched_books = []
+    for book in BOOKS:
+        if book.get("author").casefold() == author.casefold():
+            fetched_books.append(book)
+    return fetched_books
+
+"""
+a Pro way to write the code above
+
+@app.get("/books/{author}/")
+async def get_book(author: str):
+    return [book for book in BOOKS if book.get("author").casefold() == author.casefold()]
+"""
