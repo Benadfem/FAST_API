@@ -93,3 +93,19 @@ async def update_book(updated_book= Body()):
         return BOOKS
     else:
         return {"Error": f"Book with title '{updated_book.get('title')}' not found."}
+
+    """
+    there should be a way to delete data from the database
+    delete method will do that 
+    
+    it is always good to  break a loop when dealing with 
+    big data set 
+    """
+
+@app.delete("/books/delete_book/{book_title}")
+async def delete_book(book_title: str):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].get("title").casefold() == book_title.casefold():
+            BOOKS.pop(i)
+            break
+    return BOOKS
