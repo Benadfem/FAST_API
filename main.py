@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 
 app = FastAPI()
 
@@ -64,3 +64,15 @@ async def search_book_with_others(author: str, category: str):
             searched.append(book)
     return searched
 
+
+"""
+new information can be added to you database
+in this case new book can be added to the database BOOKS
+
+FastAPI has a module called body we have to import it 
+"""
+
+@app.post("/new_books/")
+async def create_new_book(new_book = Body()):
+    BOOKS.append(new_book)
+    return BOOKS
