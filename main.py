@@ -76,3 +76,20 @@ FastAPI has a module called body we have to import it
 async def create_new_book(new_book = Body()):
     BOOKS.append(new_book)
     return BOOKS
+
+"""
+We can update our database data with the put method from FastAPI
+
+this put method also uses the Body module.
+"""
+@app.put("/books/updated_book")
+async def update_book(updated_book= Body()):
+    book_updated = False
+    for i in range(len(BOOKS)):
+        if BOOKS[i].get("title").casefold() == updated_book.get("title").casefold():
+            BOOKS[i].update(updated_book)
+            break
+    if book_updated:
+        return BOOKS
+    else:
+        return {"Error": f"Book with title '{updated_book.get('title')}' not found."}
