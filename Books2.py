@@ -26,7 +26,7 @@ class Book:
 # I will create a new class for the book request inheriting the BaseModel from the pydantic
 # I will implement validation for every of my data
 class BookRequest(BaseModel):
-    id: int
+    id: Optional[int] = None
     title: str = Field(min_length= 3)
     author: str = Field(min_length=3, max_length=25)
     description: str = Field(min_length=1, max_length=30)
