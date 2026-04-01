@@ -85,6 +85,16 @@ async def read_by_book_rating(book_rating : int):
     return books_by_rating
 
 
+"""
+Now we can update the book by the book id using the BookRequest from pydantic
+"""
+@app.put("/books/update_book")
+async def update_book(book: BookRequest):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].id == book.id:
+            BOOKS[i] = book
+
+
 # let's create a post request for the project
 @app.post("/new_book")
 async def new_book(book: BookRequest):
