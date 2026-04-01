@@ -63,6 +63,16 @@ BOOKS = [
 async def read_all_books():
     return BOOKS
 
+"""
+we can decide to get a book by an ID
+so you search for a book in the shelf with the ID
+"""
+@app.get("/books/{book_id}")
+async def get_book(book_id: int):
+    for book in BOOKS:
+        if book.id == book_id:
+            return book
+
 # let's create a post request for the project
 @app.post("/new_book")
 async def new_book(book: BookRequest):
