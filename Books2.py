@@ -26,11 +26,24 @@ class Book:
 # I will create a new class for the book request inheriting the BaseModel from the pydantic
 # I will implement validation for every of my data
 class BookRequest(BaseModel):
-    id: Optional[int] = None
+
+    id: int | None = Field(description="ID not needed on create", default=None)
     title: str = Field(min_length= 3)
     author: str = Field(min_length=3, max_length=25)
     description: str = Field(min_length=1, max_length=30)
     rating: int = Field(gt=-1, lt=6)
+
+#     we can change the default display of the value on the swagger schema
+    model_config = {
+        "json_schema_extra":{
+            "example":{
+                "title":"A default Book",
+                "author":"Benson Adedara",
+                "description":"This is just a sample book for the schema",
+                "rating":5
+            }
+        }
+    }
 
 
 app = FastAPI()
