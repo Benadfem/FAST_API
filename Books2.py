@@ -94,6 +94,16 @@ async def update_book(book: BookRequest):
         if BOOKS[i].id == book.id:
             BOOKS[i] = book
 
+"""
+To delete a book from the list of books 
+we create an endpoint with path parameter
+"""
+@app.delete("/books/{book_id}")
+async def delete_book_by_id(book_id: int):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].id == book_id:
+            BOOKS.pop(i)
+            break
 
 # let's create a post request for the project
 @app.post("/new_book")
