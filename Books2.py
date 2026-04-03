@@ -76,6 +76,7 @@ async def read_book_by_id(book_id: int = Path(title="This is the book you want t
     for book in BOOKS:
         if book.id == book_id:
             return book
+    raise HTTPException(status_code=404, detail="Book not found")
 
 """
 we can filter the book by rating
@@ -94,9 +95,13 @@ Now we can update the book by the book id using the BookRequest from pydantic
 """
 @app.put("/books/update_book")
 async def update_book(book: BookRequest):
+    book_changed = False
     for i in range(len(BOOKS)):
         if BOOKS[i].id == book.id:
             BOOKS[i] = book
+            book_changed = True
+    if not book_changed:
+        raise HTTPException(status_code=404, detail="Book not found")
 
 """
 To delete a book from the list of books 
@@ -104,10 +109,14 @@ we create an endpoint with path parameter
 """
 @app.delete("/books/{book_id}")
 async def delete_book_by_id(book_id: int = Path(gt=0)):
+    book_changed = False
     for i in range(len(BOOKS)):
         if BOOKS[i].id == book_id:
             BOOKS.pop(i)
             break
+            book_changed = True
+    if not book_changed:
+        raise HTTPException(status_code=404, detail="Book not found")
 
 # let's create a post request for the project
 @app.post("/new_book")
