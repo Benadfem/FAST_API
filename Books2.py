@@ -4,7 +4,7 @@ This is a new project for the continuation of the book project we are working on
 """
 from dataclasses import Field, field
 
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, Query
 from pydantic import BaseModel, Field
 
 
@@ -34,7 +34,7 @@ class BookRequest(BaseModel):
     author: str = Field(min_length=3, max_length=25)
     description: str = Field(min_length=1, max_length=30)
     rating: int = Field(gt=-1, lt=6)
-    published_date: int = Field(gt=0, lt=2027)
+    published_date: int = Field(gt=1980, lt=2050)
 
 #     we can change the default display of the value on the swagger schema
     model_config = {
@@ -81,7 +81,7 @@ async def read_book_by_id(book_id: int = Path(title="This is the book you want t
 we can filter the book by rating
 """
 @app.get("/books/filter/")
-async def read_by_book_rating(book_rating : int):
+async def read_by_book_rating(book_rating : int= Query(gt=-1, lt=6)):
     books_by_rating = []
     for book in BOOKS:
         if book.rating == book_rating:
@@ -136,10 +136,21 @@ Then create a new GET Request method to filter by published_date
 # Having fix the necessary published_date everywhere,
 # let's create an endpoint for it
 @app.get("/books/published_date/")
-async def read_all_books_published_date(date : int):
+async def read_all_books_published_date(date : int= Query(gt=1980, lt=2050)):
     published_book_by_date = []
     for book in BOOKS:
         if book.published_date == date:
             published_book_by_date.append(book)
     return published_book_by_date
+
+"""
+I added  a get request for the books written by thesame author 
+"""
+@app.get("/books/author/")
+async def read_all_books_author(author : str= Query(min_length=3, max_length=25)):
+    books_by_author = []
+    for book in BOOKS:
+        if book.author.lower() == author.lower():
+            books_by_author.append(book)
+    return books_by_author
 
