@@ -2,10 +2,11 @@
 This is a new project for the continuation of the book project we are working on.
 
 """
-from dataclasses import Field, field
 
-from fastapi import FastAPI, Path, Query
+
+from fastapi import FastAPI, Path, Query, HTTPException
 from pydantic import BaseModel, Field
+from starlette import status
 
 
 #  I want to create a new class to create the book object
@@ -17,7 +18,8 @@ class Book:
     rating: int
     published_date: int
 
-    def __init__(self, id: int, title: str, author: str, description: str, rating: int, published_date: int ) -> None:
+    def __init__(self, id: int, title: str, author: str, description: str,
+                 rating: int, published_date: int ) -> None:
         self.id = id
         self.title = title
         self.author = author
@@ -63,7 +65,7 @@ BOOKS = [
 ]
 
 
-@app.get("/books")
+@app.get("/books", status_code=status.HTTP_200_OK)
 async def read_all_books():
     return BOOKS
 
@@ -71,7 +73,7 @@ async def read_all_books():
 we can decide to get a book by an ID
 so you search for a book in the shelf with the ID
 """
-@app.get("/books/{book_id}")
+@app.get("/books/{book_id}",status_code=status.HTTP_200_OK)
 async def read_book_by_id(book_id: int = Path(title="This is the book you want to retrieve",gt=0)):
     for book in BOOKS:
         if book.id == book_id:
@@ -81,7 +83,7 @@ async def read_book_by_id(book_id: int = Path(title="This is the book you want t
 """
 we can filter the book by rating
 """
-@app.get("/books/filter/")
+@app.get("/books/filter/",status_code=status.HTTP_200_OK)
 async def read_by_book_rating(book_rating : int= Query(gt=-1, lt=6)):
     books_by_rating = []
     for book in BOOKS:
@@ -93,7 +95,7 @@ async def read_by_book_rating(book_rating : int= Query(gt=-1, lt=6)):
 """
 Now we can update the book by the book id using the BookRequest from pydantic
 """
-@app.put("/books/update_book")
+@app.put("/books/update_book",status_code=status.HTTP_204_NO_CONTENT)
 async def update_book(book: BookRequest):
     book_changed = False
     for i in range(len(BOOKS)):
@@ -107,19 +109,20 @@ async def update_book(book: BookRequest):
 To delete a book from the list of books 
 we create an endpoint with path parameter
 """
-@app.delete("/books/{book_id}")
+@app.delete("/books/{book_id}",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_book_by_id(book_id: int = Path(gt=0)):
     book_changed = False
     for i in range(len(BOOKS)):
         if BOOKS[i].id == book_id:
             BOOKS.pop(i)
-            break
             book_changed = True
+            break
+
     if not book_changed:
         raise HTTPException(status_code=404, detail="Book not found")
 
 # let's create a post request for the project
-@app.post("/new_book")
+@app.post("/new_book",status_code=status.HTTP_201_CREATED)
 async def new_book(book: BookRequest):
     new_book = Book(**book.dict())
     BOOKS.append(book_id(new_book))
@@ -144,7 +147,7 @@ Then create a new GET Request method to filter by published_date
 
 # Having fix the necessary published_date everywhere,
 # let's create an endpoint for it
-@app.get("/books/published_date/")
+@app.get("/books/published_date/",status_code=status.HTTP_200_OK)
 async def read_all_books_published_date(date : int= Query(gt=1980, lt=2050)):
     published_book_by_date = []
     for book in BOOKS:
@@ -155,7 +158,7 @@ async def read_all_books_published_date(date : int= Query(gt=1980, lt=2050)):
 """
 I added  a get request for the books written by thesame author 
 """
-@app.get("/books/author/")
+@app.get("/books/author/",status_code=status.HTTP_200_OK)
 async def read_all_books_author(author : str= Query(min_length=3, max_length=25)):
     books_by_author = []
     for book in BOOKS:
