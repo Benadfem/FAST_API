@@ -4,7 +4,7 @@ This is a new project for the continuation of the book project we are working on
 """
 from dataclasses import Field, field
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Path
 from pydantic import BaseModel, Field
 
 
@@ -72,7 +72,7 @@ we can decide to get a book by an ID
 so you search for a book in the shelf with the ID
 """
 @app.get("/books/{book_id}")
-async def read_book_by_id(book_id: int):
+async def read_book_by_id(book_id: int = Path(title="This is the book you want to retrieve",gt=0)):
     for book in BOOKS:
         if book.id == book_id:
             return book
@@ -103,7 +103,7 @@ To delete a book from the list of books
 we create an endpoint with path parameter
 """
 @app.delete("/books/{book_id}")
-async def delete_book_by_id(book_id: int):
+async def delete_book_by_id(book_id: int = Path(gt=0)):
     for i in range(len(BOOKS)):
         if BOOKS[i].id == book_id:
             BOOKS.pop(i)
@@ -142,3 +142,4 @@ async def read_all_books_published_date(date : int):
         if book.published_date == date:
             published_book_by_date.append(book)
     return published_book_by_date
+
